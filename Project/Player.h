@@ -1,9 +1,11 @@
 #pragma once
-
 #include "GameDefine.h"
+#include "Mof.h"
 
 // ˆÚ“®‘¬“x
 #define PLAYER_SPEED		(0.1f)
+
+
 
 class CPlayer{
 private:

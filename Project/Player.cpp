@@ -152,4 +152,5 @@ void CPlayer::RenderDebugText(void){
  */
 void CPlayer::Release(void){
 	m_Mesh.Release();
+	m_ShotMesh.Release();
 }

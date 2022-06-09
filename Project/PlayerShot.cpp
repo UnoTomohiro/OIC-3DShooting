@@ -62,3 +62,14 @@ void CPlayerShot::Render(void){
 
 
 }
+
+/*
+*デバッグ描画
+*/
+void CPlayerShot::RenderDebug(void) {
+	if (!m_bShow)
+	{
+		return;
+	}
+	CGraphicsUtilities::RenderSphere(GetSphere(), Vector4(0, 1, 0, 0.3f));
+}

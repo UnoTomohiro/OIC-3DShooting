@@ -7,6 +7,7 @@ CPlayer::CPlayer() :
 m_Mesh(),
 m_Pos(0.0f,0.0f,0.0f),
 m_RotZ(0.0f),
+m_bDead(false),
 m_ShotMesh(),
 m_ShotArray(),
 m_ShotWait(){
@@ -46,6 +47,7 @@ bool CPlayer::Load(void){
 void CPlayer::Initialize(void){
 	m_Pos = Vector3(0.0f, 0.0f,-FIELD_HALF_Z+2.0f);
 	m_RotZ = 0;
+	m_bDead = false;
 	for (int i = 0; i < PLAYER_SHOT_COUNT; i++)
 	{
 		m_ShotArray[i].Initialize();
@@ -56,6 +58,10 @@ void CPlayer::Initialize(void){
  * 更新
  */
 void CPlayer::Update(void){
+	if (m_bDead)
+	{
+		return;
+	}
 	//回転方向
 	float Roll = 0;
 	//キーボードでの移動
@@ -125,6 +131,10 @@ void CPlayer::Update(void){
  * 描画
  */
 void CPlayer::Render(void){
+	if (m_bDead)
+	{
+		return;
+	}
 	//ワールド行列作成
 	CMatrix44 matWorid;
 	matWorid.RotationZ(m_RotZ);
@@ -153,4 +163,42 @@ void CPlayer::RenderDebugText(void){
 void CPlayer::Release(void){
 	m_Mesh.Release();
 	m_ShotMesh.Release();
+}
+
+void CPlayer::RenderDebug(void) {
+	//当たり判定の表示
+	CGraphicsUtilities::RenderSphere(GetSphere(), Vector4(0, 1, 0, 0.3f));
+	//弾の描画
+	for (int i = 0; i<PLAYER_SHOT_COUNT; i++)
+	{
+		m_ShotArray[i].RenderDebug();
+	}
+}
+
+void CPlayer::CollisionEnemy(CEnemy& ene) {
+	if (!ene.GetShow())
+	{
+		return;
+	}
+	CSphere ps = GetSphere();
+	CSphere es = ene.GetSphere();
+	if (ps.CollisionSphere(es))
+	{
+		m_bDead = true;
+	}
+	//弾との判定
+	for (int i = 0; i < PLAYER_SHOT_COUNT; i++)
+	{
+		if (!m_ShotArray[i].GetShow())
+		{
+			continue;
+		}
+		CSphere ss = m_ShotArray[i].GetSphere();
+		if (ss.CollisionSphere(es))
+		{
+			ene.Damage(1);
+			m_ShotArray[i].SetShow(false);
+			break;
+		}
+	}
 }

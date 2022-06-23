@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameDefine.h"
+#include  "EnemyShot.h"
 
 class CEnemy{
 private:
